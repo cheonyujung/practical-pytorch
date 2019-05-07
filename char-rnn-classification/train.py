@@ -42,7 +42,7 @@ def train(category_tensor, line_tensor):
 
     optimizer.step()
 
-    return output, loss.data[0]
+    return output, loss.item()
 
 # Keep track of losses for plotting
 current_loss = 0
@@ -73,5 +73,8 @@ for epoch in range(1, n_epochs + 1):
         all_losses.append(current_loss / plot_every)
         current_loss = 0
 
-torch.save(rnn, 'char-rnn-classification.pt')
-
+#torch.save(rnn, 'char-rnn-classification.pt')
+example = torch.rand(1, 58)
+hidden = rnn.initHidden()
+traced_script_module = torch.jit.trace(rnn, (example, hidden))
+traced_script_module.save('char-rnn-classification-jit.pt')
